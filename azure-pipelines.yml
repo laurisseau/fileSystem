@@ -5,15 +5,14 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-# Manually install Go version 1.18
 - script: |
     sudo apt-get update
-    sudo apt-get install -y golang-1.18-go
-    export GOROOT=/usr/lib/go-1.18
-    export GOPATH=$HOME/go
-    export PATH=$GOROOT/bin:$GOPATH/bin:$PATH
-    go version
-  displayName: 'Install Go 1.18'
+    sudo apt-get install -y golang
+  displayName: 'Install Go'
+
+- script: |
+    go version  # Check Go version to confirm installation
+  displayName: 'Check Go Version'
 
 - script: |
     go mod tidy
