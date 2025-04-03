@@ -5,17 +5,5 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-
-- script: |
-    go mod tidy
-  displayName: 'Install dependencies and run tests'
-
-- script: |
-    go build -o $(Build.ArtifactStagingDirectory)/fileSystem .
-  displayName: 'Build Go app'
-
-- task: PublishBuildArtifacts@1
-  inputs:
-    pathToPublish: '$(Build.ArtifactStagingDirectory)'  # Path to the directory where the artifacts are located
-    artifactName: 'drop'  # Artifact name for the build output
-    publishLocation: 'Container'  # Publish location (Azure DevOps artifacts)
+- script: echo "Hello, World!"  # Echo Hello, World! to the console
+  displayName: 'Echo Hello World'
