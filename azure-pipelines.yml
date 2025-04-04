@@ -4,10 +4,12 @@ trigger:
 pool:
   vmImage: 'ubuntu-latest'
 
-steps:
-  - task: GoTool@0
-    inputs:
-      version: '1.23.5'
+jobs:
+  - job: buildGoJob
+    steps:
+      - task: GoTool@0
+        inputs:
+          version: '1.23.5'
 
-  - script: go build -o filesystem.exe
-    displayName: 'Build Go Project'
+      - script: go build -o filesystem.exe
+        displayName: 'Build Go Project'
