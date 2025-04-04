@@ -1,12 +1,8 @@
 trigger:
-- main
+- none
 
 jobs:
 - job: HelloWorldJob
   pool:
     vmImage: 'ubuntu-latest'
-
-  steps:
-  - script: echo "Hello, World!"  # Echo Hello, World! to the console
-    displayName: 'Echo Hello World'
 
