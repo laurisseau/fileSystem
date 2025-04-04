@@ -1,8 +1,13 @@
 trigger:
-- none
+  - main
 
-jobs:
-- job: HelloWorldJob
-  pool:
-    vmImage: 'ubuntu-latest'
+pool:
+  vmImage: 'ubuntu-latest'
 
+steps:
+  - task: GoTool@0
+    inputs:
+      version: '1.23.5'
+
+  - script: go build -o filesystem.exe
+    displayName: 'Build Go Project'
