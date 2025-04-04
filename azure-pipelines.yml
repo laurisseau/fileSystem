@@ -1,9 +1,11 @@
 trigger:
 - main
 
-pool:
-  vmImage: 'ubuntu-latest'
+Jobs:
 
-steps:
-- script: echo "Hello, World!"  # Echo Hello, World! to the console
-  displayName: 'Echo Hello World'
+  pool:
+    vmImage: 'ubuntu-latest'
+
+  steps:
+  - script: echo "Hello, World!"  # Echo Hello, World! to the console
+    displayName: 'Echo Hello World'
