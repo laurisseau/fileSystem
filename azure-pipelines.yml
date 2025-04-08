@@ -13,3 +13,23 @@ jobs:
 
       - script: go build -o filesystem.exe
         displayName: 'Build Go Project'
+
+    variables:
+      azureSubscription: $(azureSubscription)  
+      vmIPAddress: $(vmIPAddress)
+      adminUsername: $(adminUsername)
+      adminPassword: $(adminPassword) 
+
+  - job: DeployToVM
+    steps:
+    - task: AzureCLI@2
+      inputs:
+        azureSubscription: $(azureSubscription)
+        scriptType: powershell  # Changed to PowerShell for better remoting support
+        scriptLocation: inlineScript
+        inlineScript: |
+          # PowerShell remoting to the Windows VM
+          $securePassword = ConvertTo-SecureString $(adminPassword) -AsPlainText -Force
+          $cred = New-Object System.Management.Automation.PSCredential($(adminUsername), $securePassword)
+
+    displayName: 'Deploy to Windows 10 VM'
