@@ -22,7 +22,7 @@ jobs:
         scriptType: 'ps' 
         scriptLocation: inlineScript
         inlineScript: |
-          Get-NetIPAddress | Select-Object IPAddress, InterfaceAlias
+          az login --tenant $(tenantId)
 
 
     displayName: 'Deploy to Windows 10 VM'
