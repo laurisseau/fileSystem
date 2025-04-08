@@ -22,7 +22,7 @@ jobs:
         scriptType: 'ps' 
         scriptLocation: inlineScript
         inlineScript: |
-          az login --tenant $(tenantId)
+          az login --tenant ${env:tenantId}
 
 
     displayName: 'Deploy to Windows 10 VM'
