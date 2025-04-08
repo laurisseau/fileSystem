@@ -24,8 +24,8 @@ jobs:
     steps:
     - task: AzureCLI@2
       inputs:
-        azureSubscription: $(azureSubscription)
-        scriptType: powershell  # Changed to PowerShell for better remoting support
+        azureSubscription: 'testserviceconnection'
+        scriptType: 'ps'  # Changed to PowerShell for better remoting support
         scriptLocation: inlineScript
         inlineScript: |
           # PowerShell remoting to the Windows VM
