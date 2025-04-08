@@ -11,7 +11,7 @@ jobs:
         inputs:
           version: '1.23.5'
 
-      - script: go build -o filesystem.exe
+      - script: go build -o $(Build.ArtifactStagingDirectory)\filesystem.exe
         displayName: 'Build Go Project'
 
     variables:
@@ -28,6 +28,26 @@ jobs:
         scriptType: 'ps' 
         scriptLocation: inlineScript
         inlineScript: |
-          Write-Host "Hello, World!"
+          # Set the path where you want to store the executable
+          $sourcePath = "$(Build.ArtifactStagingDirectory)\filesystem.exe"
+          $destinationDirectory = "C:\Program Files\filesystem"
+          $destinationPath = "$destinationDirectory\filesystem.exe"
+
+          # Check if the destination directory exists, if not, create it
+          if (-not (Test-Path -Path $destinationDirectory)) {
+              New-Item -Path $destinationDirectory -ItemType Directory
+          }
+
+          # Copy the executable to the destination
+          Copy-Item -Path $sourcePath -Destination $destinationPath -Force
+          
+          # Confirm deployment
+          Write-Host "Deployed filesystem.exe to $destinationPath"
+
+          # Run the executable
+          Write-Host "Running filesystem.exe..."
+          Start-Process -FilePath $destinationPath -NoNewWindow -Wait
+          
+          Write-Host "Execution completed."
 
     displayName: 'Deploy to Windows 10 VM'
