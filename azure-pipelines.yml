@@ -25,11 +25,9 @@ jobs:
     - task: AzureCLI@2
       inputs:
         azureSubscription: 'testserviceconnection'
-        scriptType: 'ps'  # Changed to PowerShell for better remoting support
+        scriptType: 'ps' 
         scriptLocation: inlineScript
         inlineScript: |
-          # PowerShell remoting to the Windows VM
-          $securePassword = ConvertTo-SecureString $(adminPassword) -AsPlainText -Force
-          $cred = New-Object System.Management.Automation.PSCredential($(adminUsername), $securePassword)
+          Write-Host "Hello, World!"
 
     displayName: 'Deploy to Windows 10 VM'
