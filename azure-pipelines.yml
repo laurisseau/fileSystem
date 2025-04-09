@@ -28,7 +28,7 @@ jobs:
           sshEndpoint: 'testsshserviceconnection'  # Replace with your service connection name
           runOptions: 'inline'
           inline: |
-            cd /path/to/deploy/directory  # Update with the directory where you want to deploy
+            cd /home/laurisseau/filesystem/  # Update with the directory where you want to deploy
             rm -f filesystem.exe  # Remove the old file if it exists
             mv $(Build.ArtifactStagingDirectory)/filesystem.exe .  # Deploy new executable
             ./filesystem.exe  # Start the application or do any post-deploy tasks
