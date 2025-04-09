@@ -14,27 +14,21 @@ jobs:
       - script: go build -o $(Build.ArtifactStagingDirectory)/filesystem.exe
         displayName: 'Build Go Project'
 
-      - task: SSH@0
+      - task: PublishBuildArtifacts@1
         inputs:
-          sshEndpoint: 'testssh'
-          runOptions: 'commands'
-          commands: |
-            mkdir -p ~/deploy
-        displayName: 'Create directory on VM'
+          artifactName: 'drop'
+          targetPath: $(Build.ArtifactStagingDirectory)
+          publishLocation: 'Container'
 
+  - job: deployJob
+    dependsOn: buildGoJob
+    steps:
       - task: SSH@0
         inputs:
-          sshEndpoint: 'testssh'
-          runOptions: 'script'
-          scriptPath: '$(Build.ArtifactStagingDirectory)/filesystem.exe'
-          targetPath: '/home/your-username/deploy/filesystem.exe'  # Replace with the path you want on the VM
-        displayName: 'Copy binary to VM'
-
-      - task: SSH@0
-        inputs:
-          sshEndpoint: 'testssh'
-          runOptions: 'commands'
-          commands: |
-            chmod +x ~/deploy/filesystem.exe
-            nohup ~/deploy/filesystem.exe > ~/deploy/output.log 2>&1 &
-        displayName: 'Run binary on VM'
+          sshEndpoint: 'testsshserviceconnection'  # Replace with your service connection name
+          runOptions: 'inline'
+          inline: |
+            cd /path/to/deploy/directory  # Update with the directory where you want to deploy
+            rm -f filesystem.exe  # Remove the old file if it exists
+            mv $(Build.ArtifactStagingDirectory)/filesystem.exe .  # Deploy new executable
+            ./filesystem.exe  # Start the application or do any post-deploy tasks
