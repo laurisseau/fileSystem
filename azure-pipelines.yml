@@ -11,18 +11,30 @@ jobs:
         inputs:
           version: '1.23.5'
 
-      - script: go build -o $(Build.ArtifactStagingDirectory)\filesystem.exe
+      - script: go build -o $(Build.ArtifactStagingDirectory)/filesystem.exe
         displayName: 'Build Go Project'
 
-  - job: DeployToVM
-    steps:
-    - task: AzureCLI@2
-      inputs:
-        azureSubscription: 'testserviceconnection'
-        scriptType: 'ps' 
-        scriptLocation: inlineScript
-        inlineScript: |
-          az login --tenant ${env:tenantId}
+      - task: SSH@0
+        inputs:
+          sshEndpoint: 'testssh'
+          runOptions: 'commands'
+          commands: |
+            mkdir -p ~/deploy
+        displayName: 'Create directory on VM'
 
+      - task: SSH@0
+        inputs:
+          sshEndpoint: 'testssh'
+          runOptions: 'script'
+          scriptPath: '$(Build.ArtifactStagingDirectory)/filesystem.exe'
+          targetPath: '/home/your-username/deploy/filesystem.exe'  # Replace with the path you want on the VM
+        displayName: 'Copy binary to VM'
 
-    displayName: 'Deploy to Windows 10 VM'
+      - task: SSH@0
+        inputs:
+          sshEndpoint: 'testssh'
+          runOptions: 'commands'
+          commands: |
+            chmod +x ~/deploy/filesystem.exe
+            nohup ~/deploy/filesystem.exe > ~/deploy/output.log 2>&1 &
+        displayName: 'Run binary on VM'
