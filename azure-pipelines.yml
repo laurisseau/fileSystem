@@ -25,7 +25,7 @@ jobs:
     steps:
       - task: SSH@0
         inputs:
-          sshEndpoint: 'testsshserviceconnection'  # Replace with your service connection name
+          sshEndpoint: 'testsshserviceconnection'
           runOptions: 'inline'
           inline: |
             cd /home/laurisseau/filesystem/  # Update with the directory where you want to deploy
