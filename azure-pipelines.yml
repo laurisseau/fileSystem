@@ -11,7 +11,7 @@ jobs:
         inputs:
           version: '1.23.5'
 
-      - script: go build -o $(Build.ArtifactStagingDirectory)/filesystem.bin
+      - script: GOOS=linux GOARCH=amd64 go build -o $(Build.ArtifactStagingDirectory)/filesystem.bin
         displayName: 'Build Go Project'
 
       - task: PublishBuildArtifacts@1
@@ -47,6 +47,9 @@ jobs:
         runOptions: 'inline'
         inline: |
           cd /home/laurisseau/filesystem  # Update with the directory where you deployed
+
           chmod +x filesystem.bin # Ensure the file is executable
+
           ./filesystem.bin # Run the Linux executable
+
         displayName: 'Run Executable on Linux VM'
