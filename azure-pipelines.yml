@@ -19,6 +19,14 @@ jobs:
           artifactName: 'drop'
           targetPath: $(Build.ArtifactStagingDirectory)
           publishLocation: 'Container'
+          
+        # Download the published artifact
+      - task: DownloadBuildArtifacts@0
+        inputs:
+          buildType: 'current'
+          downloadType: 'specific'
+          artifactName: 'drop'  # Name of the artifact you published
+          targetPath: $(Pipeline.Workspace)/drop  # Location to download the artifact
 
   - job: DeployFile
     steps:
