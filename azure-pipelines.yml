@@ -11,8 +11,9 @@ jobs:
         inputs:
           version: '1.23.5'
 
-      - script: go build -o $(Build.ArtifactStagingDirectory)/filesystem.exe
-        displayName: 'Build Go Project'
+      # Build a Linux binary (cross-compiling Go)
+      - script: GOOS=linux GOARCH=amd64 go build -o $(Build.ArtifactStagingDirectory)/filesystem
+        displayName: 'Build Go Project for Linux'
 
       - task: PublishBuildArtifacts@1
         inputs:
@@ -35,11 +36,19 @@ jobs:
     - task: CopyFilesOverSSH@0
       inputs:
         sshEndpoint: 'testsshserviceconnection'  # Your SSH service connection name
-        sourceFolder: '$(Build.ArtifactStagingDirectory)/drop'  # Path to the downloaded artifact folder
+        sourceFolder: '$(Pipeline.Workspace)/drop'  # Path to the downloaded artifact folder
         contents: '**/*'  # Copy all files in the artifact
         targetFolder: '/home/laurisseau/filesystem/'  # The directory on the Azure Linux VM where you want to upload the file
         cleanTargetFolder: true  # Clean target folder before upload (optional)
 
-    # Optionally, add a success message
-    - script: |
-        echo "Files uploaded successfully to the VM."
+    # Run the Linux-compatible executable on the VM
+    - task: SSH@0
+      inputs:
+        sshEndpoint: 'testsshserviceconnection'  # Your SSH service connection name
+        runOptions: 'inline'
+        inline: |
+          cd /home/laurisseau/filesystem  # Update with the directory where you deployed
+          chmod +x filesystem  # Ensure the file is executable
+          ./filesystem  # Run the Linux executable
+        displayName: 'Run Executable on Linux VM'
+
