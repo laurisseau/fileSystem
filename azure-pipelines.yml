@@ -47,6 +47,6 @@ jobs:
         runOptions: 'inline'
         inline: |
           cd /home/laurisseau/filesystem  # Update with the directory where you deployed
-          chmod +x filesystem.exe # Ensure the file is executable
-          ./filesystem.exe # Run the Linux executable
+          chmod +x filesystem.bin # Ensure the file is executable
+          ./filesystem.bin # Run the Linux executable
         displayName: 'Run Executable on Linux VM'
