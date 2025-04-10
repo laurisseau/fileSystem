@@ -11,7 +11,7 @@ jobs:
         inputs:
           version: '1.23.5'
 
-      - script: GOOS=linux GOARCH=amd64 go build -o $(Build.ArtifactStagingDirectory)/filesystem.bin
+      - script: go build -o $(Build.ArtifactStagingDirectory)/filesystem.bin
         displayName: 'Build Go Project'
 
       - task: PublishBuildArtifacts@1
