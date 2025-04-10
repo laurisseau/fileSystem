@@ -11,14 +11,9 @@ jobs:
         inputs:
           version: '1.23.5'
 
-      - script: go build -o $(Build.ArtifactStagingDirectory)/filesystem.exe
+      - script: go build -o filesystem.exe
         displayName: 'Build Go Project'
 
-      - task: PublishBuildArtifacts@1
-        inputs:
-          artifactName: 'drop'
-          targetPath: $(Build.ArtifactStagingDirectory)
-          publishLocation: 'Container'
 
   - job: deployJob
     dependsOn: buildGoJob
@@ -28,7 +23,10 @@ jobs:
           sshEndpoint: 'testsshserviceconnection'
           runOptions: 'inline'
           inline: |
-            cd /home/laurisseau/filesystem/  # Update with the directory where you want to deploy
+            cd /home/laurisseau/filesystem/ 
+
             rm -f filesystem.exe  # Remove the old file if it exists
-            mv $(Build.ArtifactStagingDirectory)/filesystem.exe .  # Deploy new executable
+            
+            mv filesystem.exe .  # Deploy new executable
+
             ./filesystem.exe  # Start the application or do any post-deploy tasks
