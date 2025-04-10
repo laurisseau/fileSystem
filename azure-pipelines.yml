@@ -11,7 +11,7 @@ jobs:
         inputs:
           version: '1.23.5'
 
-      - script: go build -o $(Build.ArtifactStagingDirectory)/filesystem.exe
+      - script: go build -o $(Build.ArtifactStagingDirectory)\filesystem.exe
         displayName: 'Build Go Project'
 
       - task: PublishBuildArtifacts@1
@@ -25,7 +25,7 @@ jobs:
     - task: CopyFilesOverSSH@0
       inputs:
         sshEndpoint: 'testsshserviceconnection'  # The name of the SSH service connection
-        sourceFolder: '$(Build.ArtifactStagingDirectory)/filesystem.exe'  # Path to the file you want to upload
+        sourceFolder: '$(Build.ArtifactStagingDirectory)\filesystem.exe'  # Path to the file you want to upload
         targetFolder: '/home/laurisseau/filesystem/'  # Directory on the Azure Linux VM where you want to upload the file
         cleanTargetFolder: true  # Set to true if you want to clean the target directory before uploading
 
