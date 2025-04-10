@@ -11,23 +11,35 @@ jobs:
         inputs:
           version: '1.23.5'
 
-      - script: go build -o $(Build.ArtifactStagingDirectory)\filesystem.exe
+      - script: go build -o $(Build.ArtifactStagingDirectory)/filesystem.exe
         displayName: 'Build Go Project'
 
       - task: PublishBuildArtifacts@1
         inputs:
-          artifactName: 'drop'
+          artifactName: 'drop'  # Name of the artifact
           targetPath: $(Build.ArtifactStagingDirectory)
-          publishLocation: 'Container'
+          publishLocation: 'Container'  # Publish to Azure DevOps artifacts container
 
-  - job: DeployFile
+  - job: deployToVM
+    dependsOn: buildGoJob
     steps:
+    # Download the published artifact
+    - task: DownloadBuildArtifacts@0
+      inputs:
+        buildType: 'current'
+        downloadType: 'specific'
+        artifactName: 'drop'  # Name of the artifact you published
+        targetPath: $(Pipeline.Workspace)/drop  # Location to download the artifact
+
+    # Copy the artifact to the Azure Linux VM using SSH
     - task: CopyFilesOverSSH@0
       inputs:
-        sshEndpoint: 'testsshserviceconnection'  # The name of the SSH service connection
-        sourceFolder: '$(Build.ArtifactStagingDirectory)\filesystem.exe'  # Path to the file you want to upload
-        targetFolder: '/home/laurisseau/filesystem/'  # Directory on the Azure Linux VM where you want to upload the file
-        cleanTargetFolder: true  # Set to true if you want to clean the target directory before uploading
+        sshEndpoint: 'testsshserviceconnection'  # Your SSH service connection name
+        sourceFolder: '$(Pipeline.Workspace)/drop'  # Path to the downloaded artifact folder
+        contents: '**/*'  # Copy all files in the artifact
+        targetFolder: '/home/laurisseau/filesystem/'  # The directory on the Azure Linux VM where you want to upload the file
+        cleanTargetFolder: true  # Clean target folder before upload (optional)
 
+    # Optionally, add a success message
     - script: |
-        echo "File uploaded successfully"
+        echo "Files uploaded successfully to the VM."
