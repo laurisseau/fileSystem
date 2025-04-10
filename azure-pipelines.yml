@@ -16,30 +16,18 @@ jobs:
 
       - task: PublishBuildArtifacts@1
         inputs:
-          artifactName: 'drop'  # Name of the artifact
+          artifactName: 'drop'
           targetPath: $(Build.ArtifactStagingDirectory)
-          publishLocation: 'Container'  # Publish to Azure DevOps artifacts container
+          publishLocation: 'Container'
 
-  - job: deployToVM
-    dependsOn: buildGoJob
+  - job: DeployFile
     steps:
-    # Download the published artifact
-    - task: DownloadBuildArtifacts@0
-      inputs:
-        buildType: 'current'
-        downloadType: 'specific'
-        artifactName: 'drop'  # Name of the artifact you published
-        targetPath: $(Pipeline.Workspace)/drop  # Location to download the artifact
-
-    # Copy the artifact to the Azure Linux VM using SSH
     - task: CopyFilesOverSSH@0
       inputs:
-        sshEndpoint: 'testsshserviceconnection'  # Your SSH service connection name
-        sourceFolder: '$(Pipeline.Workspace)/drop'  # Path to the downloaded artifact folder
-        contents: '**/*'  # Copy all files in the artifact
-        targetFolder: '/home/laurisseau/filesystem/'  # The directory on the Azure Linux VM where you want to upload the file
-        cleanTargetFolder: true  # Clean target folder before upload (optional)
+        sshEndpoint: 'testsshserviceconnection'  # The name of the SSH service connection
+        sourceFolder: '$(Pipeline.Workspace)/drop/filesystem.exe'  # Path to the file you want to upload
+        targetFolder: '/home/laurisseau/filesystem/'  # Directory on the Azure Linux VM where you want to upload the file
+        cleanTargetFolder: true  # Set to true if you want to clean the target directory before uploading
 
-    # Optionally, add a success message
     - script: |
-        echo "Files uploaded successfully to the VM."
+        echo "File uploaded successfully"
