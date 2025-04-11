@@ -48,5 +48,4 @@ jobs:
           cd C:\Users\laurisseau\filesystem
       
           Start-Process filesystem.exe
-
         displayName: 'Run Executable'
