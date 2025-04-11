@@ -11,7 +11,7 @@ jobs:
         inputs:
           version: '1.23.5'
 
-      - script: go build -o $(Build.ArtifactStagingDirectory)/filesystem.bin
+      - script: go build -o $(Build.ArtifactStagingDirectory)/filesystem.exe
         displayName: 'Build Go Project'
 
       - task: PublishBuildArtifacts@1
@@ -20,36 +20,29 @@ jobs:
           targetPath: $(Build.ArtifactStagingDirectory)
           publishLocation: 'Container'  # Publish to Azure DevOps artifacts container
 
-  - job: deployToVM
+  - job: deployToWindowsVM
     dependsOn: buildGoJob
     steps:
-    # Download the published artifact
-    - task: DownloadBuildArtifacts@0
-      inputs:
-        buildType: 'current'
-        downloadType: 'specific'
-        artifactName: 'drop'  # Name of the artifact you published
-        targetPath: $(Pipeline.Workspace)/drop  # Location to download the artifact
+      - task: DownloadBuildArtifacts@0
+        inputs:
+          buildType: 'current'
+          downloadType: 'specific'
+          artifactName: 'drop'
+          targetPath: $(Pipeline.Workspace)/drop
 
-    # Copy the artifact to the Azure Linux VM using SSH
-    - task: CopyFilesOverSSH@0
-      inputs:
-        sshEndpoint: 'testsshserviceconnection'  # Your SSH service connection name
-        sourceFolder: '$(Build.ArtifactStagingDirectory)/drop'  # Path to the downloaded artifact folder
-        contents: '**/*'  # Copy all files in the artifact
-        targetFolder: '/home/laurisseau/filesystem/'  # The directory on the Azure Linux VM where you want to upload the file
-        cleanTargetFolder: true  # Clean target folder before upload (optional)
+      - task: CopyFilesOverSSH@0
+        inputs:
+          sshEndpoint: 'testsshserviceconnection'
+          sourceFolder: '$(Pipeline.Workspace)/drop'
+          contents: '**/*'
+          targetFolder: 'C:/Users/laurisseau/filesystem'  # Make sure this folder exists or use an existing one
+          cleanTargetFolder: true
 
-    # Run the Linux-compatible executable on the VM
-    - task: SSH@0
-      inputs:
-        sshEndpoint: 'testsshserviceconnection'  # Your SSH service connection name
-        runOptions: 'inline'
-        inline: |
-          cd /home/laurisseau/filesystem  # Update with the directory where you deployed
-
-          chmod +x filesystem.bin # Ensure the file is executable
-
-          ./filesystem.bin # Run the Linux executable
-
-        displayName: 'Run Executable on Linux VM'
+      - task: SSH@0
+        inputs:
+          sshEndpoint: 'testsshserviceconnection'
+          runOptions: 'inline'
+          inline: |
+            cd C:\Users\laurisseau\filesystem
+            Start-Process filesystem.exe
+          displayName: 'Run Executable'
