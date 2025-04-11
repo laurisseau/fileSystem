@@ -31,7 +31,6 @@ jobs:
         artifactName: 'drop'  # Name of the artifact you published
         targetPath: $(Pipeline.Workspace)/drop  # Location to download the artifact
 
-
     - task: CopyFilesOverSSH@0
       inputs:
         sshEndpoint: 'testsshserviceconnection'  
